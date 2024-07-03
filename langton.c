@@ -57,18 +57,29 @@ int main(int argc, char* argv[]) {
     Ant ant = {(int)GRID_WIDTH/2, (int)GRID_HEIGHT/2, {0, 1}};
 
     // Main loop
-    SDL_Event e;
+   SDL_Event e;
     int quit = 0;
+    int paused = 0;  // Variable to control the pause state
     while (!quit) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 quit = 1;
             }
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.sym == SDLK_q) {
+                    quit = 1;
+                } else if (e.key.keysym.sym == SDLK_p) {
+                    paused = 1;  // Pause the game
+                } else if (e.key.keysym.sym == SDLK_s) {
+                    paused = 0;  // Start the game again
+                }
+            }
         }
 
-        // Update the grid
-        updateGrid(grid, &ant);
-
+        // Update the grid only if the game is not paused
+        if (!paused) {
+            updateGrid(grid, &ant);
+        }
         // Clear the renderer
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
@@ -100,7 +111,7 @@ void *turn(Ant *ant, bool right){
     // Calculate the new directions
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
-            new_direction[i] += right ? ant->direction[j]*rT[i][j] : ant->direction[j]*lT[i][j];
+            new_direction[i] += right ? ant->direction[j]*rT[i][j] : ant->direction[j]*lT[i][j]; // turn right if the "right" variable is True, left it not
         }
     }
     // Assign the new direction to the ant's direction
