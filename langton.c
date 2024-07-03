@@ -21,7 +21,7 @@ typedef struct{
 }Ant;
 
 void *turn(Ant *ant, bool right);
-void initializeGrid(int grid[GRID_WIDTH][GRID_HEIGHT], Ant *ant);
+void initializeGrid(int grid[GRID_WIDTH][GRID_HEIGHT]);
 void drawGrid(SDL_Renderer *renderer, int grid[GRID_WIDTH][GRID_HEIGHT], Ant *ant);
 void updateGrid(int grid[GRID_WIDTH][GRID_HEIGHT], Ant *ant);
 
@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(renderer);
 
         // Draw the grid
-        drawGrid(renderer, grid);
+        drawGrid(renderer, grid, &ant);
 
         // Present the renderer
         SDL_RenderPresent(renderer);
@@ -118,7 +118,7 @@ void initializeGrid(int grid[GRID_WIDTH][GRID_HEIGHT]) {
     }
 }
 
-void drawGrid(SDL_Renderer *renderer, int grid[GRID_WIDTH][GRID_HEIGHT]) {
+void drawGrid(SDL_Renderer *renderer, int grid[GRID_WIDTH][GRID_HEIGHT], Ant *ant) {
     for (int x = 0; x < GRID_WIDTH; ++x) {
         for (int y = 0; y < GRID_HEIGHT; ++y) {
             if (grid[x][y] == 1) {
@@ -130,7 +130,12 @@ void drawGrid(SDL_Renderer *renderer, int grid[GRID_WIDTH][GRID_HEIGHT]) {
             SDL_RenderFillRect(renderer, &cell);
         }
     }
+    // draw the ant red
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_Rect cell = { ant->x * CELL_SIZE, ant->y * CELL_SIZE, CELL_SIZE, CELL_SIZE };
+    SDL_RenderFillRect(renderer, &cell);
 }
+
 
 void updateGrid(int grid[GRID_WIDTH][GRID_HEIGHT], Ant *ant) {
     // Apply the rules of Langton's Ant
